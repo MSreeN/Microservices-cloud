@@ -1,5 +1,6 @@
 package com.learn.employeeservice.controller;
 
+import com.learn.employeeservice.dto.ApiResponseDto;
 import com.learn.employeeservice.dto.EmployeeDto;
 import com.learn.employeeservice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class EmployeeController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<EmployeeDto> getByEmployeeId(@PathVariable Long id)throws Exception{
-        EmployeeDto employeeDto = employeeService.getEmployeeById(id);
-        return new ResponseEntity<>(employeeDto, HttpStatus.OK);
+    public ResponseEntity<ApiResponseDto> getByEmployeeId(@PathVariable Long id)throws Exception{
+        ApiResponseDto apiResponseDto = employeeService.getEmployeeById(id);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 }
