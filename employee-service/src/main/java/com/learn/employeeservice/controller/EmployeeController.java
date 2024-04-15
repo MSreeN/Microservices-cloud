@@ -3,6 +3,7 @@ package com.learn.employeeservice.controller;
 import com.learn.employeeservice.dto.ApiResponseDto;
 import com.learn.employeeservice.dto.EmployeeDto;
 import com.learn.employeeservice.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @PostMapping("/save")
-    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody EmployeeDto employeeDto){
+    public ResponseEntity<EmployeeDto> saveEmployee(@Valid @RequestBody EmployeeDto employeeDto){
         EmployeeDto employeeDto1 = employeeService.saveEmployee(employeeDto);
         return new ResponseEntity<>(employeeDto1, HttpStatus.CREATED);
     }
