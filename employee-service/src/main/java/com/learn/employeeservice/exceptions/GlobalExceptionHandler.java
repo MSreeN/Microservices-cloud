@@ -22,4 +22,13 @@ public class GlobalExceptionHandler {
         System.out.println("executing");
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidValidationException.class)
+    public ResponseEntity<ErrorDetails> validationException(InvalidValidationException ex, WebRequest webRequest){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
+                ex.getMessage(),
+                webRequest.getDescription(false),
+                "INVALID_INPUT_FORMAT");
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 }
