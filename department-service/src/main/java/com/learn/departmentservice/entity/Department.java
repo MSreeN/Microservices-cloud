@@ -23,7 +23,5 @@ public class Department {
 
     @NotNull
     @NotBlank
-    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.
-    )
     private String departmentCode;
 }

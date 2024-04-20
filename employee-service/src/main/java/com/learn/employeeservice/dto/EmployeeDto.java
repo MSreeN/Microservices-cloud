@@ -1,9 +1,6 @@
 package com.learn.employeeservice.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,5 +23,7 @@ public class EmployeeDto {
     private String email;
     @NotBlank(message = "Department Code must not be blank")
     @NotNull(message = "Department Code must not be null")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "departmentCode", name = "department_code", nullable = false)
     private String departmentCode;
 }
