@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Controller
 @RequestMapping("api/employees")
@@ -25,6 +26,9 @@ public class EmployeeController {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    private WebClient webClient;
+
     @PostMapping("/save")
     public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody @Valid EmployeeDto employeeDto,
                                                     Errors errors){
@@ -34,9 +38,17 @@ public class EmployeeController {
 
         }
         try {
-            ResponseEntity<DepartmentDto> departmentResponse = restTemplate.getForEntity("http" +
-                    "://localhost:8082/api" +
-                    "/department/" + employeeDto.getDepartmentCode(), DepartmentDto.class);
+//            ResponseEntity<DepartmentDto> departmentResponse = restTemplate.getForEntity("http" +
+//                    "://localhost:8082/api" +
+//                    "/department/" + employeeDto.getDepartmentCode(), DepartmentDto.class);
+
+            DepartmentDto departmentResponse =
+                    webClient.get()
+                            .uri("http" +"://localhost:8082/api" +
+                   "/department/" + employeeDto.getDepartmentCode())
+                            .retrieve()
+                            .bodyToMono(DepartmentDto.class)
+                            .block();
         }
         catch(Exception ex){
             throw new ResourceNotFoundException("Department "+employeeDto.getDepartmentCode()+" " +
