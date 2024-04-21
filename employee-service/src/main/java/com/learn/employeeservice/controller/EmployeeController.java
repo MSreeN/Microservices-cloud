@@ -1,8 +1,10 @@
 package com.learn.employeeservice.controller;
 
 import com.learn.employeeservice.dto.ApiResponseDto;
+import com.learn.employeeservice.dto.DepartmentDto;
 import com.learn.employeeservice.dto.EmployeeDto;
 import com.learn.employeeservice.exceptions.InvalidValidationException;
+import com.learn.employeeservice.exceptions.ResourceNotFoundException;
 import com.learn.employeeservice.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
 @RequestMapping("api/employees")
@@ -19,6 +22,9 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    RestTemplate restTemplate;
+
     @PostMapping("/save")
     public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody @Valid EmployeeDto employeeDto,
                                                     Errors errors){
@@ -26,6 +32,15 @@ public class EmployeeController {
             throw new InvalidValidationException(errors.getFieldError().getDefaultMessage());
 
 
+        }
+        ResponseEntity<DepartmentDto> departmentResponse = restTemplate.getForEntity("http" +
+                "://localhost:8082/api" +
+                "/department/"+employeeDto.getDepartmentCode(), DepartmentDto.class);
+        System.out.println("department res "+ departmentResponse);
+        if(departmentResponse.getStatusCode().equals(HttpStatus.NOT_FOUND)){
+            System.out.println("No department");
+            throw new ResourceNotFoundException("Department "+employeeDto.getDepartmentCode()+" " +
+                    "is not found");
         }
         EmployeeDto employeeDto1 = employeeService.saveEmployee(employeeDto);
         return new ResponseEntity<>(employeeDto1, HttpStatus.CREATED);
