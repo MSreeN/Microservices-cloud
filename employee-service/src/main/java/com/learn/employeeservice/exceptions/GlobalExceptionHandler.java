@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 webRequest.getDescription(false),
-                "USER_NOT_FOUND"
+                "NOT_FOUND"
         );
         System.out.println("executing");
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
@@ -38,16 +38,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(RestClientException.class)
-    public ResponseEntity<ErrorDetails> restException(RestClientException ex,
-                                                      WebRequest webRequest){
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                webRequest.getDescription(false),
-                 "NOT_Found"
-        );
-//        ErrorDetails errorDetails = modelMapper.map(ex.getMessage(), ErrorDetails.class);
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
-    }
 }

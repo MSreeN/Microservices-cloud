@@ -33,15 +33,20 @@ public class EmployeeController {
 
 
         }
-        ResponseEntity<DepartmentDto> departmentResponse = restTemplate.getForEntity("http" +
-                "://localhost:8082/api" +
-                "/department/"+employeeDto.getDepartmentCode(), DepartmentDto.class);
-        System.out.println("department res "+ departmentResponse);
-        if(departmentResponse.getStatusCode().equals(HttpStatus.NOT_FOUND)){
-            System.out.println("No department");
-            throw new ResourceNotFoundException("Department "+employeeDto.getDepartmentCode()+" " +
-                    "is not found");
+        try {
+            ResponseEntity<DepartmentDto> departmentResponse = restTemplate.getForEntity("http" +
+                    "://localhost:8082/api" +
+                    "/department/" + employeeDto.getDepartmentCode(), DepartmentDto.class);
         }
+        catch(Exception ex){
+            throw new ResourceNotFoundException("Department "+employeeDto.getDepartmentCode()+" " +
+                    "not found");
+        }
+//        if(departmentResponse.getStatusCode().equals(HttpStatus.NOT_FOUND)){
+//            System.out.println("No department");
+//            throw new ResourceNotFoundException("Department "+employeeDto.getDepartmentCode()+" " +
+//                    "is not found");
+//        }
         EmployeeDto employeeDto1 = employeeService.saveEmployee(employeeDto);
         return new ResponseEntity<>(employeeDto1, HttpStatus.CREATED);
     }
