@@ -5,6 +5,7 @@ import com.learn.employeeservice.dto.DepartmentDto;
 import com.learn.employeeservice.dto.EmployeeDto;
 import com.learn.employeeservice.exceptions.InvalidValidationException;
 import com.learn.employeeservice.exceptions.ResourceNotFoundException;
+import com.learn.employeeservice.service.ApiClient;
 import com.learn.employeeservice.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,26 +30,28 @@ public class EmployeeController {
     @Autowired
     private WebClient webClient;
 
+    ApiClient apiClient;
+
     @PostMapping("/save")
     public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody @Valid EmployeeDto employeeDto,
                                                     Errors errors){
         if(errors.hasErrors()){
             throw new InvalidValidationException(errors.getFieldError().getDefaultMessage());
-
-
         }
         try {
 //            ResponseEntity<DepartmentDto> departmentResponse = restTemplate.getForEntity("http" +
 //                    "://localhost:8082/api" +
 //                    "/department/" + employeeDto.getDepartmentCode(), DepartmentDto.class);
 
-            DepartmentDto departmentResponse =
-                    webClient.get()
-                            .uri("http" +"://localhost:8082/api" +
-                   "/department/" + employeeDto.getDepartmentCode())
-                            .retrieve()
-                            .bodyToMono(DepartmentDto.class)
-                            .block();
+//            DepartmentDto departmentResponse =
+//                    webClient.get()
+//                            .uri("http" +"://localhost:8082/api" +
+//                   "/department/" + employeeDto.getDepartmentCode())
+//                            .retrieve()
+//                            .bodyToMono(DepartmentDto.class)
+//                            .block();
+            DepartmentDto departmentDto =
+                    apiClient.getByDepartmentCode(employeeDto.getDepartmentCode());
         }
         catch(Exception ex){
             throw new ResourceNotFoundException("Department "+employeeDto.getDepartmentCode()+" " +
