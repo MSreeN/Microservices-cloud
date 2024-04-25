@@ -71,4 +71,16 @@ public class EmployeeController {
         ApiResponseDto apiResponseDto = employeeService.getEmployeeById(id);
         return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
+
+    @GetMapping("/postTest")
+    public ResponseEntity<String> postTest(){
+        String depResponse =  webClient.post().uri("http://localhost:8082/api" +
+                        "/department" +
+                        "/postTest")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        String finalResponse = depResponse + " department response";
+        return new ResponseEntity<>(finalResponse, HttpStatus.OK);
+    }
 }
