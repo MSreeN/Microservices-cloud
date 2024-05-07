@@ -7,6 +7,7 @@ import com.learn.employeeservice.dto.EmployeeDto;
 import com.learn.employeeservice.entity.Employee;
 import com.learn.employeeservice.exceptions.ResourceNotFoundException;
 import com.learn.employeeservice.repository.EmployeeRepository;
+import com.learn.employeeservice.service.ApiClient;
 import com.learn.employeeservice.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    ApiClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -53,13 +57,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public ApiResponseDto getEmployeeById(Long id) throws ResourceNotFoundException {
         Optional<Employee> employee = employeeRepository.findById(id);
         Employee employee1 = employee.orElseThrow(() -> new ResourceNotFoundException("No employee with" + "id "+ id));
-        ResponseEntity<DepartmentDto> department =
-                restTemplate.getForEntity("http://localhost:8082/api/department/"+employee1.getDepartmentCode(),
-                        DepartmentDto.class);
+        DepartmentDto department =
+                apiClient.getByDepartmentCode(employee1.getDepartmentCode());
         EmployeeDto employeeDto = modelMapper.map(employee1, EmployeeDto.class);
         ApiResponseDto apiResponseDto = new ApiResponseDto();
         apiResponseDto.setEmployeeDto(employeeDto);
-        apiResponseDto.setDepartmentDto(department.getBody());
+        apiResponseDto.setDepartmentDto(department);
         return  apiResponseDto;
     }
 }
