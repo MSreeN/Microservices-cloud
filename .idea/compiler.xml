@@ -10,6 +10,7 @@
         <module name="eurekaserver" />
         <module name="apigateway" />
         <module name="department-service" />
+        <module name="employee-service (1)" />
         <module name="employee-service" />
       </profile>
     </annotationProcessing>
