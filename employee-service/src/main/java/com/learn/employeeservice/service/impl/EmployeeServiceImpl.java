@@ -76,4 +76,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         apiResponseDto.setDepartmentDto(department);
         return  apiResponseDto;
     }
+
+    public ApiResponseDto defaultResponse(Long id) throws ResourceNotFoundException{
+        Optional<Employee> employee = employeeRepository.findById(id);
+        Employee employee1 = employee.orElseThrow(() -> new ResourceNotFoundException("No employee with" + "id " + id));
+//        DepartmentDto department =
+//                apiClient.getByDepartmentCode(employee1.getDepartmentCode());
+        DepartmentDto department = new DepartmentDto(6, "R&D Dep", "Research and Development",
+                "RD" );
+        EmployeeDto employeeDto = modelMapper.map(employee1, EmployeeDto.class);
+        ApiResponseDto apiResponseDto = new ApiResponseDto();
+        apiResponseDto.setEmployeeDto(employeeDto);
+        apiResponseDto.setDepartmentDto(department);
+        return apiResponseDto;
+
+    }
 }
