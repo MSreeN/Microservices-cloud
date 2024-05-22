@@ -10,7 +10,10 @@ import com.learn.employeeservice.repository.EmployeeRepository;
 import com.learn.employeeservice.service.ApiClient;
 import com.learn.employeeservice.service.EmployeeService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
+
 
     @Autowired
     EmployeeRepository employeeRepository;
@@ -58,9 +63,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDto1;
     }
 
-    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "defaultResponse")
+//    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "defaultResponse")
     @Override
+    @Retry(name = "${spring.application.name", fallbackMethod = "defaultResponse")
     public ApiResponseDto getEmployeeById(Long id) throws ResourceNotFoundException {
+        log.info("log from employee method");
         Optional<Employee> employee = employeeRepository.findById(id);
         Employee employee1 = employee.orElseThrow(() -> new ResourceNotFoundException("No employee with" + "id "+ id));
 //        DepartmentDto department =
@@ -77,8 +84,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         return  apiResponseDto;
     }
 
-    public ApiResponseDto defaultResponse(Long id) throws ResourceNotFoundException{
+    public ApiResponseDto defaultResponse(Long id, Throwable throwable) throws ResourceNotFoundException{
         Optional<Employee> employee = employeeRepository.findById(id);
+        log.info("log from fallback method");
         Employee employee1 = employee.orElseThrow(() -> new ResourceNotFoundException("No employee with" + "id " + id));
 //        DepartmentDto department =
 //                apiClient.getByDepartmentCode(employee1.getDepartmentCode());
